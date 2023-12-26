@@ -19,6 +19,8 @@ struct ContentView: View {
             courts="court"
         }
         numPlayersText="You have entered \(numPlayers) players on \(numCourts) \(courts) and each player will play \(numGamesPlayedPerPlayer) games."
+     
+        generateSchedule(numPlayers: 12, numCourts: 2, gamesPerPlayer: 5)
     }
     
     var body: some View {

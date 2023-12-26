@@ -6,6 +6,9 @@
 //
 
 import Foundation
+public func test(){
+    print("hello here. i'm here!!")
+}
 
 public func generateSchedule(numPlayers: Int, numCourts: Int, gamesPerPlayer: Int) -> String {
     if numPlayers < 4 * numCourts {
@@ -94,7 +97,7 @@ public func generateSchedule(numPlayers: Int, numCourts: Int, gamesPerPlayer: In
             }
         }
     }
-    
+    print("here's the schedule \(schedule)")
     return "\(schedule)"
 }
 
