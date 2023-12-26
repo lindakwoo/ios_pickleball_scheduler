@@ -1,6 +1,6 @@
 //
 //  generateSchedule.swift
-//  Pickleball Game Scheduler
+//  Leo and Linda project
 //
 //  Created by Linda Woo on 12/26/23.
 //
@@ -108,4 +108,3 @@ func combinations<T>(elements: [T], k: Int) -> [(T, T)] {
     }
     return result
 }
-

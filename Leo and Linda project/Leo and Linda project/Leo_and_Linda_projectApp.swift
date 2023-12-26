@@ -1,6 +1,6 @@
 //
-//  ios_pickleball_schedulerApp.swift
-//  ios pickleball scheduler
+//  Leo_and_Linda_projectApp.swift
+//  Leo and Linda project
 //
 //  Created by Linda Woo on 12/26/23.
 //
@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct ios_pickleball_schedulerApp: App {
+struct Leo_and_Linda_projectApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
