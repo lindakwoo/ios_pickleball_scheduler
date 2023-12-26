@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import utils
 
 struct ContentView: View {
     @State var numPlayers: String = ""
