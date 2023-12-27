@@ -13,6 +13,7 @@ struct ContentView: View {
     @State var numGamesPlayedPerPlayer: String = ""
     @State var numPlayersText: String=""
     @State var courts:String="courts"
+    @State var schedule = [Team]()
     
     func setText() {
         guard let playersNum = Int(numPlayers),
@@ -29,7 +30,8 @@ struct ContentView: View {
         
         numPlayersText = "You have entered \(playersNum) players on \(courtsNum) \(courts == "1" ? "court" : "courts") and each player will play \(gamesNum) games."
 
-        generateSchedule(numPlayers: playersNum, numCourts: courtsNum, gamesPerPlayer: gamesNum)
+       schedule = generateSchedule(numPlayers: playersNum, numCourts: courtsNum, gamesPerPlayer: gamesNum)
+        print(schedule)
     }
     
     var body: some View {
@@ -88,11 +90,13 @@ struct ContentView: View {
             } .padding()
             Spacer()
             Text(numPlayersText)
+            ForEach(schedule) { game in
+                Text("Team 1: \(game.team1), Team 2: \(game.team2)")
+            }
         }
         .padding()
     }
 }
 
-#Preview {
-    ContentView()
+#Preview {v
 }

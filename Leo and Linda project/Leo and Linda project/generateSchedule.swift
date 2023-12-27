@@ -6,13 +6,23 @@
 //
 
 import Foundation
-public func test(){
-    print("hello here. i'm here!!")
+
+public struct Team: Identifiable {
+    public let id: UUID // Keep the identifier public
+    public let team1: (Int, Int)
+    public let team2: (Int, Int)
+
+    // Public initializer
+    public init(id: UUID, team1: (Int, Int), team2: (Int, Int)) {
+        self.id = id
+        self.team1 = team1
+        self.team2 = team2
+    }
 }
 
-public func generateSchedule(numPlayers: Int, numCourts: Int, gamesPerPlayer: Int) -> String {
+public func generateSchedule(numPlayers: Int, numCourts: Int, gamesPerPlayer: Int) -> [Team] {
     if numPlayers < 4 * numCourts {
-        return "Error: not enough players"
+        print("Error: not enough players")
     }
     
     var players = Array(0..<numPlayers)
@@ -21,7 +31,7 @@ public func generateSchedule(numPlayers: Int, numCourts: Int, gamesPerPlayer: In
     var historyTracker = [[Int]](repeating: [Int](repeating: 0, count: numPlayers), count: numPlayers)
     var teamHistoryTracker = [[Int]](repeating: [Int](repeating: 0, count: numPlayers), count: numPlayers)
     var gamesCounter = [Int](repeating: 0, count: numPlayers)
-    var schedule = [(team1: (Int, Int), team2: (Int, Int))]()
+    var schedule = [Team]()
     
     func hasPlayedTogether(p1: Int, p2: Int) -> Bool {
         return historyTracker[p1][p2] > 0
@@ -81,7 +91,8 @@ public func generateSchedule(numPlayers: Int, numCourts: Int, gamesPerPlayer: In
             }
             
             if let (team1, team2) = validTeams(combination: leastCombination) {
-                schedule.append((team1: team1, team2: team2))
+                let team = Team(id: UUID(), team1: team1, team2: team2)
+                schedule.append(team)
             }
             gamesScheduled += 1
             
@@ -101,8 +112,8 @@ public func generateSchedule(numPlayers: Int, numCourts: Int, gamesPerPlayer: In
     }
     
     
-    print("here's the schedule \(schedule)")
-    return "\(schedule)"
+
+    return schedule
 }
 
     
