@@ -32,20 +32,20 @@ public func generateSchedule(numPlayers: Int, numCourts: Int, gamesPerPlayer: In
     }
     
     func validTeams(combination: [Int]) -> ((Int, Int), (Int, Int))? {
-        for team in combinations(elements: combination, k: 2) {
-            if !hasBeenTeammates(p1: team.0, p2: team.1) {
-                let remainingPlayers = Set(combination).subtracting([team.0, team.1])
+        for team in combinations(arr: combination, combinationSize: 2) {
+            if !hasBeenTeammates(p1: team[0], p2: team[1]) {
+                let remainingPlayers = Set(combination).subtracting([team[0], team[1]])
                 let remainingArray = Array(remainingPlayers)
                 let otherTeam = (remainingArray[0], remainingArray[1])
-                
+
                 if !hasBeenTeammates(p1: otherTeam.0, p2: otherTeam.1) {
-                    teamHistoryTracker[team.0][team.1] += 1
-                    teamHistoryTracker[team.1][team.0] += 1
-                    
+                    teamHistoryTracker[team[0]][team[1]] += 1
+                    teamHistoryTracker[team[1]][team[0]] += 1
+
                     teamHistoryTracker[otherTeam.0][otherTeam.1] += 1
                     teamHistoryTracker[otherTeam.1][otherTeam.0] += 1
-                    
-                    return (team, otherTeam)
+
+                    return ((team[0], team[1]), (otherTeam.0, otherTeam.1))
                 }
             }
         }
@@ -60,9 +60,9 @@ public func generateSchedule(numPlayers: Int, numCourts: Int, gamesPerPlayer: In
     print("total games: \(totalGames)")
     
     while gamesScheduled < totalGames {
-        let validCombinations = combinations(elements: players, k: 4).filter {
+        let validCombinations = combinations(arr: players, combinationSize: 4).filter {
             combination in
-            return gamesCounter[combination.0] < gamesPerPlayer && gamesCounter[combination.1] < gamesPerPlayer
+            return gamesCounter[combination[0]] < gamesPerPlayer && gamesCounter[combination[1]] < gamesPerPlayer && gamesCounter[combination[2]] < gamesPerPlayer && gamesCounter[combination[3]] < gamesPerPlayer
         }
         
         if validCombinations.isEmpty {
@@ -74,40 +74,53 @@ public func generateSchedule(numPlayers: Int, numCourts: Int, gamesPerPlayer: In
                 break
             }
             
-            let leastCombination = validCombinations.min { team1, team2 in
-                let sum1 = gamesCounter[team1.0] + gamesCounter[team1.1]
-                let sum2 = gamesCounter[team2.0] + gamesCounter[team2.1]
-                return sum1 < sum2
+            let leastCombination = validCombinations.reduce(validCombinations[0]) { (min, current) in
+                let sumCurrent = current.reduce(0) { $0 + gamesCounter[$1] }
+                let sumMin = min.reduce(0) { $0 + gamesCounter[$1] }
+                return sumCurrent < sumMin ? current : min
             }
             
-            if let leastCombinationTuple = leastCombination,
-               let leastCombination = validTeams(combination: [leastCombinationTuple.0, leastCombinationTuple.1]) {
-                let (team1, team2) = leastCombination
+            if let (team1, team2) = validTeams(combination: leastCombination) {
                 schedule.append((team1: team1, team2: team2))
-                gamesScheduled += 1
+            }
+            gamesScheduled += 1
+            
+            for combination in combinations(arr: leastCombination, combinationSize: 2) {
+                let p1 = combination[0]
+                let p2 = combination[1]
                 
-                for (p1, p2) in combinations(elements: [leastCombinationTuple.0, leastCombinationTuple.1], k: 2) {
-                    historyTracker[p1][p2] += 1
-                    historyTracker[p2][p1] += 1
-                }
-                
-                for p in [leastCombinationTuple.0, leastCombinationTuple.1] {
-                    gamesCounter[p] += 1
-                }
+                // Your existing logic here...
+                historyTracker[p1][p2] += 1
+                historyTracker[p2][p1] += 1
+            }
+            
+            for p in leastCombination {
+                gamesCounter[p] += 1
             }
         }
     }
+    
+    
     print("here's the schedule \(schedule)")
     return "\(schedule)"
 }
 
-// Helper function to generate combinations of elements
-func combinations<T>(elements: [T], k: Int) -> [(T, T)] {
-    var result = [(T, T)]()
-    for i in 0..<elements.count {
-        for j in i+1..<elements.count {
-            result.append((elements[i], elements[j]))
+    
+    func combinations<T>(arr: [T], combinationSize: Int) -> [[T]] {
+        var combinations = [[T]]()
+        
+        // Generate combinations iteratively
+        for i in 0 ..< (1 << arr.count) {
+            if i.nonzeroBitCount == combinationSize {
+                var combination = [T]()
+                for j in 0 ..< arr.count {
+                    if (i & (1 << j)) != 0 {
+                        combination.append(arr[j])
+                    }
+                }
+                combinations.append(combination)
+            }
         }
+        
+        return combinations
     }
-    return result
-}
