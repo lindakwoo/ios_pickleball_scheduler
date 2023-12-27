@@ -14,13 +14,22 @@ struct ContentView: View {
     @State var numPlayersText: String=""
     @State var courts:String="courts"
     
-    func setText(){
-        if numCourts == "1" {
-            courts="court"
+    func setText() {
+        guard let playersNum = Int(numPlayers),
+              let courtsNum = Int(numCourts),
+              let gamesNum = Int(numGamesPlayedPerPlayer) else {
+            // Handle the case where conversion fails
+            // You might want to display an error message or take appropriate action
+            return
         }
-        numPlayersText="You have entered \(numPlayers) players on \(numCourts) \(courts) and each player will play \(numGamesPlayedPerPlayer) games."
-     
-        generateSchedule(numPlayers: 12, numCourts: 2, gamesPerPlayer: 5)
+
+        if numCourts == "1" {
+            courts = "1"
+        }
+        
+        numPlayersText = "You have entered \(playersNum) players on \(courtsNum) \(courts == "1" ? "court" : "courts") and each player will play \(gamesNum) games."
+
+        generateSchedule(numPlayers: playersNum, numCourts: courtsNum, gamesPerPlayer: gamesNum)
     }
     
     var body: some View {
