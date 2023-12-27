@@ -31,7 +31,7 @@ struct ContentView: View {
         numPlayersText = "You have entered \(playersNum) players on \(courtsNum) \(courts == "1" ? "court" : "courts") and each player will play \(gamesNum) games."
 
        schedule = generateSchedule(numPlayers: playersNum, numCourts: courtsNum, gamesPerPlayer: gamesNum)
-        print(schedule)
+      
     }
     
     var body: some View {
@@ -90,13 +90,15 @@ struct ContentView: View {
             } .padding()
             Spacer()
             Text(numPlayersText)
-            ForEach(schedule) { game in
-                Text("Team 1: \(game.team1), Team 2: \(game.team2)")
+            ForEach(schedule) { team in
+                Text(team.description)
             }
+         
         }
         .padding()
     }
 }
 
-#Preview {v
+#Preview {
+    ContentView()
 }

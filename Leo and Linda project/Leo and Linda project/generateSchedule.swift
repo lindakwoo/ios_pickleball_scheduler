@@ -20,6 +20,12 @@ public struct Team: Identifiable {
     }
 }
 
+extension Team: CustomStringConvertible {
+    public var description: String {
+        return "Team 1: \(team1), Team 2: \(team2)"
+    }
+}
+
 public func generateSchedule(numPlayers: Int, numCourts: Int, gamesPerPlayer: Int) -> [Team] {
     if numPlayers < 4 * numCourts {
         print("Error: not enough players")
@@ -112,7 +118,7 @@ public func generateSchedule(numPlayers: Int, numCourts: Int, gamesPerPlayer: In
     }
     
     
-
+print(schedule)
     return schedule
 }
 
