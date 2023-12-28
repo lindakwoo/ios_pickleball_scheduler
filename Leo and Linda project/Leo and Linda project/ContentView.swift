@@ -14,6 +14,7 @@ struct ContentView: View {
     @State var numPlayersText: String=""
     @State var courts:String="courts"
     @State var schedule = [Team]()
+    @State private var playerNames: [String] = []
     
     func setText() {
         guard let playersNum = Int(numPlayers),
@@ -27,10 +28,8 @@ struct ContentView: View {
         if numCourts == "1" {
             courts = "1"
         }
-        
-        numPlayersText = "You have entered \(playersNum) players on \(courtsNum) \(courts == "1" ? "court" : "courts") and each player will play \(gamesNum) games."
 
-       schedule = generateSchedule(numPlayers: playersNum, numCourts: courtsNum, gamesPerPlayer: gamesNum)
+       schedule = generateSchedule(numPlayers: playersNum, numCourts: courtsNum, gamesPerPlayer: gamesNum, playerNames: playerNames)
       
     }
     
@@ -51,8 +50,22 @@ struct ContentView: View {
                     .frame(width: 100.0)
                     .background(Color.cyan)
                     .keyboardType(.decimalPad)
+                    .onChange(of: numPlayers) {
+                            // Update your logic here based on the new value of numberOfPlayers
+                        if Int(numPlayers) ?? 0 > 3{
+                            playerNames = Array(repeating: "", count: Int(numPlayers) ?? 0)
+                            numPlayersText="Enter the names of your \(numPlayers) players below"
+                        }
+                        else {numPlayersText="you must have at leaast 4 players"}
+                    }
                 Spacer()
             }
+            Text(numPlayersText)
+            ForEach(0..<playerNames.count, id: \.self) { index in
+                          TextField("Player \(index + 1)", text: $playerNames[index])
+                              .padding()
+                              .textFieldStyle(RoundedBorderTextFieldStyle())
+                      }
           
             HStack{
                 Spacer()
@@ -89,7 +102,6 @@ struct ContentView: View {
                     .padding()
             } .padding()
             Spacer()
-            Text(numPlayersText)
             ForEach(schedule) { team in
                 Text(team.description)
             }
