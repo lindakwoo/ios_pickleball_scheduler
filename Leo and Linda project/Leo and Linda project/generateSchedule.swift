@@ -8,12 +8,11 @@
 import Foundation
 
 public struct Team: Identifiable {
-    public let id: UUID // Keep the identifier public
-    public let team1: (Int, Int)
-    public let team2: (Int, Int)
+    public let id: UUID
+    public let team1: (String, String)
+    public let team2: (String, String)
 
-    // Public initializer
-    public init(id: UUID, team1: (Int, Int), team2: (Int, Int)) {
+    public init(id: UUID, team1: (String, String), team2: (String, String)) {
         self.id = id
         self.team1 = team1
         self.team2 = team2
@@ -26,7 +25,7 @@ extension Team: CustomStringConvertible {
     }
 }
 
-public func generateSchedule(numPlayers: Int, numCourts: Int, gamesPerPlayer: Int) -> [Team] {
+public func generateSchedule(numPlayers: Int, numCourts: Int, gamesPerPlayer: Int, playerNames: [String]) -> [Team] {
     if numPlayers < 4 * numCourts {
         print("Error: not enough players")
     }
@@ -97,7 +96,7 @@ public func generateSchedule(numPlayers: Int, numCourts: Int, gamesPerPlayer: In
             }
             
             if let (team1, team2) = validTeams(combination: leastCombination) {
-                let team = Team(id: UUID(), team1: team1, team2: team2)
+                let team = Team(id: UUID(), team1: (playerNames[team1.0], playerNames[team1.1]), team2: (playerNames[team2.0], playerNames[team2.1]))
                 schedule.append(team)
             }
             gamesScheduled += 1
