@@ -89,7 +89,7 @@ struct ContentView: View {
                     .padding()
             } .padding()
             Spacer()
-            Text(numPlayersText)
+          
             ForEach(schedule) { team in
                 Text(team.description)
             }
