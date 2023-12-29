@@ -147,29 +147,49 @@ struct ScheduleView: View {
         self.numCourts = numCourts
     }
     var body: some View {
-        VStack {
-            Text("Generated Schedule")
-                .font(.largeTitle)
-                .padding()
-
-            // Display the schedule here
-            ForEach(rounds) { round in
-                         VStack {
-                             Text("Round \(round.roundNumber)")
-                                 .font(.title2)
-                            
-
-                             ForEach(round.games, id: \.id) { team in
-                                 Text(team.description)
-                                     .font(.footnote)
-                             }
-                         }
-                         .id(round.id) // Specify the id for the outer ForEach
-                     }
-
-                     Spacer()
-                 }
-                 .padding()
+        ScrollView {
+            
+            VStack {
+                Text("Generated Schedule")
+                    .font(.largeTitle)
+                    .padding()
+                
+                // Display the schedule here
+                ForEach(rounds) { round in
+                    VStack {
+                        Text("Round \(round.roundNumber)")
+                            .font(.title)
+                            .padding()
+                        
+                        
+                        ForEach(round.games, id: \.id) { team in
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack {
+                                    Spacer()
+                                    Text(team.description)
+                                        .padding()
+                                        .frame(minWidth: 150)
+                                        .background(Color.blue)
+                                        .foregroundColor(.white)
+                                        .cornerRadius(10)
+                                    Spacer()
+                                }
+                                .frame(maxWidth: .infinity, alignment: .center)
+                                
+                            }
+                            .frame(height: 50) 
+                        }
+                        
+                        
+                        
+                    }
+                    .id(round.id) // Specify the id for the outer ForEach
+                }
+                
+                Spacer()
+            }
+            .padding()
+        }
     }
 }
 
