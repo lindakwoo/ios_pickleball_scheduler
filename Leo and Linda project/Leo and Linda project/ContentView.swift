@@ -44,14 +44,15 @@ struct ContentView: View {
                         .frame(width: 100.0, height: 100.0)
                     Spacer()
                     HStack{
-                        Spacer()
-                        Text("number of players :")
+                 
+                        Text("number of players:")
+                            .padding(.leading, 50.0)
                         Spacer()
                         TextField("number of players", text: $numPlayers)
                             .foregroundColor(Color.white)
                             .padding()
-                            .frame(width: 100.0)
-                            .background(Color.cyan)
+                            .frame(width: 65.0, height:30)
+                            .background(Color.green)
                             .keyboardType(.decimalPad)
                             .onChange(of: numPlayers) { newValue in
                                 if Int(numPlayers) ?? 0 > 3{
@@ -60,45 +61,51 @@ struct ContentView: View {
                                 }
                                 else {numPlayersText="you must have at leaast 4 players"}
                             }
-                        Spacer()
+                     
                     }
+                    .padding(.trailing, 50.0)
                     Text(numPlayersText)
                     ForEach(0..<playerNames.count, id: \.self) { index in
                         TextField("Player \(index + 1)", text: $playerNames[index])
+                            .padding(.horizontal, 50.0)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                     }
                     
                     HStack{
-                        Spacer()
+                 
                         Text("number of courts:")
+                            .padding(.leading, 50.0)
                         Spacer()
                         TextField("number of courts", text: $numCourts)
+                            
                             .foregroundColor(Color.white)
                             .padding()
-                            .frame(width: 100.0)
-                            .background(Color.cyan)
+                            .frame(width: 65.0, height:30)
+                            .background(Color.green)
                             .keyboardType(.decimalPad)
-                        Spacer()
+                
                     }
-                    
+                    .padding(.trailing, 50.0)
                     HStack{
-                        Spacer()
+                   
                         Text("games per player:")
+                            .padding(.leading, 50.0)
                         Spacer()
                         TextField("number of games per player", text: $numGamesPlayedPerPlayer)
                             .foregroundColor(Color.white)
                             .padding()
-                            .frame(width: 100.0)
-                            .background(Color.cyan)
+                            .frame(width: 65.0, height:30)
+                            .background(Color.green)
                             .keyboardType(.decimalPad)
-                        Spacer()
+                    
                     }
+                    .padding(.trailing, 50.0)
                     Spacer()
                     NavigationLink(destination: ScheduleView(schedule: schedule, numCourts: numCourts ).onAppear(perform: setText)) {
                         Text("Generate Schedule")
                             .foregroundColor(Color.white)
                             .frame(width: 200.0, height: 50.0)
-                            .background(Color.cyan)
+                            .background(Color.green)
                             .padding()
                     }
                     .padding()
@@ -149,11 +156,12 @@ struct ScheduleView: View {
             ForEach(rounds) { round in
                          VStack {
                              Text("Round \(round.roundNumber)")
-                                 .font(.title)
-                                 .padding()
+                                 .font(.title2)
+                            
 
                              ForEach(round.games, id: \.id) { team in
                                  Text(team.description)
+                                     .font(.footnote)
                              }
                          }
                          .id(round.id) // Specify the id for the outer ForEach
