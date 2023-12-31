@@ -11,102 +11,95 @@ struct ContentView: View {
     @State var numPlayers: String = ""
     @State var numCourts: String = ""
     @State var numGamesPlayedPerPlayer: String = ""
-    @State var numPlayersText: String=""
-    @State var courts:String="courts"
-    @State var schedule = [Team]()
+    @State var numPlayersText: String = "Enter player details"
+    @State var courts: String = "courts"
+    @State var schedule = [[Game]]()  // Updated to reflect the new structure
     @State private var playerNames: [String] = []
-    var round:Int = 1
     
     func setText() {
         guard let playersNum = Int(numPlayers),
               let courtsNum = Int(numCourts),
               let gamesNum = Int(numGamesPlayedPerPlayer) else {
-            // Handle the case where conversion fails
-            // You might want to display an error message or take appropriate action
+            self.numPlayersText = "Invalid input. Please enter valid numbers."
             return
         }
 
-        if numCourts == "1" {
-            courts = "1"
+        if courtsNum == 1 {
+            courts = "court"
+        } else {
+            courts = "courts"
         }
 
-       schedule = generateSchedule(numPlayers: playersNum, numCourts: courtsNum, gamesPerPlayer: gamesNum, playerNames: playerNames)
-      
+        schedule = generateSchedule(numPlayers: playersNum, numCourts: courtsNum, gamesPerPlayer: gamesNum, playerNames: playerNames)
     }
-    
+
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack {
-                    Spacer()
+                VStack(alignment: .leading) {
                     Image("picksked")
                         .resizable()
-                        .frame(width: 100.0, height: 100.0)
-                    Spacer()
-                    HStack{
-                        Spacer()
-                        Text("number of players :")
-                        Spacer()
-                        TextField("number of players", text: $numPlayers)
-                            .foregroundColor(Color.white)
-                            .padding()
-                            .frame(width: 100.0)
-                            .background(Color.cyan)
-                            .keyboardType(.decimalPad)
+                        .frame(width: 100, height: 100)
+                        .padding(.bottom, 20)
+
+                    Group {
+                        InputFieldView(label: "Number of players:", text: $numPlayers, placeholder: "Enter number of players")
                             .onChange(of: numPlayers) { newValue in
-                                if Int(numPlayers) ?? 0 > 3{
-                                    playerNames = Array(repeating: "", count: Int(numPlayers) ?? 0)
-                                    numPlayersText="Enter the names of your \(numPlayers) players below"
+                                if let playerCount = Int(numPlayers), playerCount > 3 {
+                                    playerNames = Array(repeating: "", count: playerCount)
+                                    numPlayersText = "Enter the names of your \(playerCount) players below"
+                                } else {
+                                    numPlayersText = "You must have at least 4 players"
                                 }
-                                else {numPlayersText="you must have at leaast 4 players"}
                             }
-                        Spacer()
+                        
+                        Text(numPlayersText)
+                            .font(.callout)
+                            .foregroundColor(.secondary)
+                        
+                        ForEach(0..<playerNames.count, id: \.self) { index in
+                            TextField("Player \(index + 1)", text: $playerNames[index])
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                        }
+                        
+                        InputFieldView(label: "Number of courts:", text: $numCourts, placeholder: "Enter number of courts")
+                        InputFieldView(label: "Games per player:", text: $numGamesPlayedPerPlayer, placeholder: "Enter games per player")
                     }
-                    Text(numPlayersText)
-                    ForEach(0..<playerNames.count, id: \.self) { index in
-                        TextField("Player \(index + 1)", text: $playerNames[index])
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                    }
+
+                    Spacer(minLength: 20)
                     
-                    HStack{
-                        Spacer()
-                        Text("number of courts:")
-                        Spacer()
-                        TextField("number of courts", text: $numCourts)
-                            .foregroundColor(Color.white)
-                            .padding()
-                            .frame(width: 100.0)
-                            .background(Color.cyan)
-                            .keyboardType(.decimalPad)
-                        Spacer()
-                    }
-                    
-                    HStack{
-                        Spacer()
-                        Text("games per player:")
-                        Spacer()
-                        TextField("number of games per player", text: $numGamesPlayedPerPlayer)
-                            .foregroundColor(Color.white)
-                            .padding()
-                            .frame(width: 100.0)
-                            .background(Color.cyan)
-                            .keyboardType(.decimalPad)
-                        Spacer()
-                    }
-                    Spacer()
-                    NavigationLink(destination: ScheduleView(schedule: schedule, numCourts: numCourts ).onAppear(perform: setText)) {
+                    NavigationLink(destination: ScheduleView(schedule: schedule, numCourts: numCourts).onAppear(perform: setText)) {
                         Text("Generate Schedule")
-                            .foregroundColor(Color.white)
-                            .frame(width: 200.0, height: 50.0)
+                            .foregroundColor(.white)
+                            .frame(minWidth: 200, minHeight: 50)
                             .background(Color.cyan)
-                            .padding()
+                            .cornerRadius(10)
                     }
                     .padding()
-                    
                 }
                 .padding()
-                Spacer()
             }
+            .navigationTitle("Pickleball Game Scheduler")
+        }
+    }
+}
+
+struct InputFieldView: View {
+    var label: String
+    @Binding var text: String
+    var placeholder: String
+
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text(label)
+                .font(.headline)
+            TextField(placeholder, text: $text)
+                .foregroundColor(.white)
+                .padding(10)
+                .frame(height: 44)
+                .background(Color.cyan)
+                .keyboardType(.decimalPad)
+                .cornerRadius(5)
         }
     }
 }
@@ -120,29 +113,22 @@ extension Array {
 }
 
 struct ScheduleView: View {
-    struct Round: Identifiable {
-        let id = UUID()
-        let roundNumber: Int
-        let games: [Team]
-    }
-
-    let schedule: [Team]
+    let schedule: [[Game]]  // Schedule is now an array of rounds, each containing an array of Games
     let numCourts: String
 
+    // Compute rounds based on the schedule provided
     var rounds: [Round] {
-        schedule.chunked(into: Int(numCourts) ?? 1).enumerated().map { (index, chunk) in
-            return Round(roundNumber: index + 1, games: chunk)
+        schedule.enumerated().map { (index, games) in
+            Round(roundNumber: index + 1, games: games)
         }
     }
 
-    init(schedule: [Team], numCourts: String) {
+    init(schedule: [[Game]], numCourts: String) {
         self.schedule = schedule
         self.numCourts = numCourts
     }
     var body: some View {
         ScrollView {
-            
-            
             VStack {
                 Text("Generated Schedule")
                     .font(.largeTitle)
@@ -155,31 +141,18 @@ struct ScheduleView: View {
                             .font(.title)
                             .padding()
                         
-                        
-                        ForEach(round.games, id: \.id) { team in
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                HStack {
-                                    Spacer()
-                                    Text(team.description)
-                                        .padding()
-                                        .frame(minWidth: 150)
-                                        .background(Color.blue)
-                                        .foregroundColor(.white)
-                                        .cornerRadius(10)
-                                    Spacer()
-                                }
-                                .frame(maxWidth: .infinity, alignment: .center)
-                                
-                            }
-                            .frame(height: 50) 
+                        // Use the gameDescriptions method from Round to display each game with its number
+                        ForEach(round.gameDescriptions(), id: \.self) { gameDescription in
+                            Text(gameDescription)
+                                .padding()
+                                .frame(minWidth: 150)
+                                .background(Color.blue)
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
                         }
-                        
-                        
-                        
                     }
-                    .id(round.id) // Specify the id for the outer ForEach
+                    .padding(.bottom, 20) // Add some space between each round
                 }
-                
                 Spacer()
             }
             .padding()
