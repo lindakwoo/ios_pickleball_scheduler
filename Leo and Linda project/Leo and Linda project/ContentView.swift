@@ -11,103 +11,184 @@ struct ContentView: View {
     @State var numPlayers: String = ""
     @State var numCourts: String = ""
     @State var numGamesPlayedPerPlayer: String = ""
-    @State var numPlayersText: String=""
-    @State var courts:String="courts"
-    @State var schedule = [Team]()
+    @State var numPlayersText: String = ""
+    @State var courts: String = "courts"
+    @State var schedule = [[Game]]() 
     @State private var playerNames: [String] = []
     
     func setText() {
         guard let playersNum = Int(numPlayers),
               let courtsNum = Int(numCourts),
               let gamesNum = Int(numGamesPlayedPerPlayer) else {
-            // Handle the case where conversion fails
-            // You might want to display an error message or take appropriate action
+            self.numPlayersText = "Invalid input. Please enter valid numbers."
             return
         }
 
-        if numCourts == "1" {
-            courts = "1"
-        }
-
-       schedule = generateSchedule(numPlayers: playersNum, numCourts: courtsNum, gamesPerPlayer: gamesNum, playerNames: playerNames)
-      
+        schedule = generateSchedule(numPlayers: playersNum, numCourts: courtsNum, gamesPerPlayer: gamesNum, playerNames: playerNames)
     }
-    
-    var body: some View {
-        VStack {
-           Spacer()
-            Text("Pickleball Scheduler")
-                .font(.largeTitle)
-                .padding()
-            Spacer()
-            HStack{
-                Spacer()
-                Text("number of players :")
-                Spacer()
-                TextField("number of players", text: $numPlayers)
-                    .foregroundColor(Color.white)
-                    .padding()
-                    .frame(width: 100.0)
-                    .background(Color.cyan)
-                    .keyboardType(.decimalPad)
-                    .onChange(of: numPlayers) {
-                            // Update your logic here based on the new value of numberOfPlayers
-                        if Int(numPlayers) ?? 0 > 3{
-                            playerNames = Array(repeating: "", count: Int(numPlayers) ?? 0)
-                            numPlayersText="Enter the names of your \(numPlayers) players below"
-                        }
-                        else {numPlayersText="you must have at leaast 4 players"}
-                    }
-                Spacer()
-            }
-            Text(numPlayersText)
-            ForEach(0..<playerNames.count, id: \.self) { index in
-                          TextField("Player \(index + 1)", text: $playerNames[index])
-                              .padding()
-                              .textFieldStyle(RoundedBorderTextFieldStyle())
-                      }
-          
-            HStack{
-                Spacer()
-                Text("number of courts:")
-                Spacer()
-                TextField("number of courts", text: $numCourts)
-                    .foregroundColor(Color.white)
-                    .padding()
-                    .frame(width: 100.0)
-                    .background(Color.cyan)
-                    .keyboardType(.decimalPad)
-                Spacer()
-            }
-     
-            HStack{
-                Spacer()
-                Text("games per player:")
-                Spacer()
-                TextField("number of games per player", text: $numGamesPlayedPerPlayer)
-                    .foregroundColor(Color.white)
-                    .padding()
-                    .frame(width: 100.0)
-                    .background(Color.cyan)
-                    .keyboardType(.decimalPad)
-                Spacer()
-            }
-            Spacer()
-            Button(action: {setText()}) {
-                Text("submit")
-                    .font(.title)
-                    .foregroundColor(Color.white)
-                    .frame(width: 150.0, height: 50.0)
-                    .background(Color.cyan)
-                    .padding()
-            } .padding()
-            Spacer()
-            ForEach(schedule) { team in
-                Text(team.description)
-            }
-         
+
+     // Check if all player names are filled out
+    func allPlayerNamesFilled() -> Bool {
+        return !playerNames.contains { $0.isEmpty }
+    }
+
+    func isPositiveInteger(_ input: String) -> Bool {
+        if let number = Int(input), number > 0 {
+            return true
         }
-        .padding()
+        return false
+    }
+
+    var body: some View {
+        NavigationView {
+            ScrollView {
+                VStack(alignment: .center) {
+                    Image("picksked")
+                        .resizable()
+                        .frame(width: 100, height: 100)
+                        .padding(.bottom, 20)
+
+                    Group {
+                        InputFieldView(label: "Number of players:", text: $numPlayers, placeholder: "Enter number of players")
+                            .onChange(of: numPlayers) { newValue in
+                                if let playerCount = Int(numPlayers), playerCount > 3 {
+                                    playerNames = Array(repeating: "", count: playerCount)
+                                    numPlayersText = !allPlayerNamesFilled() ? "Enter the names of your \(playerCount) players below": ""
+                                } else {
+                                     playerNames = Array(repeating: "", count: 0)
+                                    numPlayersText = "You must have at least 4 players"
+                                    
+                                }
+                            }
+                        
+                        Text(numPlayersText)
+                            .font(.callout)
+                            .foregroundColor(.secondary)
+                        
+                        ForEach(0..<playerNames.count, id: \.self) { index in
+                            TextField("Player \(index + 1)", text: $playerNames[index])
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .onChange(of:playerNames[index]){newValue in
+                                numPlayersText = !allPlayerNamesFilled() ? "Enter the names of your \(numPlayers) players below": "" }
+                        }
+                        
+                        InputFieldView(label: "Number of courts:", text: $numCourts, placeholder: "Enter number of courts")
+                        InputFieldView(label: "Games per player:", text: $numGamesPlayedPerPlayer, placeholder: "Enter games per player")
+                    }
+
+                    Spacer(minLength: 20)
+                    
+                    NavigationLink(
+                        destination: scheduleDestinationView,
+                        label: {
+                            Text("Generate Schedule")
+                                .foregroundColor(.white)
+                                .frame(minWidth: 200, minHeight: 50)
+                                .background(Color.cyan)
+                                .cornerRadius(10)
+                        }
+                    )
+                    .padding()
+                    .disabled(!(allPlayerNamesFilled() && isPositiveInteger(numCourts) && isPositiveInteger(numGamesPlayedPerPlayer)))
+                    .opacity(allPlayerNamesFilled() && isPositiveInteger(numCourts) && isPositiveInteger(numGamesPlayedPerPlayer) ? 1.0 : 0.5)
+                }
+                .padding()
+             
+            }
+            .navigationTitle("Pickleball Scheduler")
+        }
+    }
+
+    // Destination view for the NavigationLink
+    private var scheduleDestinationView: some View {
+        if allPlayerNamesFilled() && isPositiveInteger(numCourts) && isPositiveInteger(numGamesPlayedPerPlayer){
+           // Set the text before navigating
+            return AnyView(ScheduleView(schedule: schedule, numCourts: numCourts).onAppear(perform: setText))
+        } else {
+            return AnyView(
+                VStack {
+                    Text("All player names must be filled out.")
+                        .foregroundColor(.red)
+                        .padding()
+                    Spacer()
+                }
+            )
+        }
+    }
+}
+
+struct InputFieldView: View {
+    var label: String
+    @Binding var text: String
+    var placeholder: String
+
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text(label)
+                .font(.headline)
+            TextField(placeholder, text: $text)
+                .foregroundColor(.white)
+                .padding(10)
+                .frame(height: 44)
+                .background(Color.cyan)
+                .keyboardType(.decimalPad)
+                .cornerRadius(5)
+        }
+    }
+}
+
+extension Array {
+    func chunked(into size: Int) -> [[Element]] {
+        return stride(from: 0, to: count, by: size).map {
+            Array(self[$0 ..< Swift.min($0 + size, count)])
+        }
+    }
+}
+
+struct ScheduleView: View {
+    let schedule: [[Game]]  // Schedule is now an array of rounds, each containing an array of Games
+    let numCourts: String
+
+    // Compute rounds based on the schedule provided
+    var rounds: [Round] {
+        schedule.enumerated().map { (index, games) in
+            Round(roundNumber: index + 1, games: games)
+        }
+    }
+
+    init(schedule: [[Game]], numCourts: String) {
+        self.schedule = schedule
+        self.numCourts = numCourts
+    }
+
+    var body: some View {
+        ScrollView {
+            VStack {
+                Text("Generated Schedule")
+                    .font(.largeTitle)
+                    .padding()
+                ForEach(rounds) { round in
+                    VStack {
+                        Text("Round \(round.roundNumber)")
+                            .font(.title)
+                        
+                        // Use the gameDescriptions method from Round to display each game with its number
+                        ForEach(round.gameDescriptions(), id: \.self) { gameDescription in
+                            Text(gameDescription)
+                                .font(.footnote)
+                                .padding()
+                                .frame(minWidth: 150)
+                                .background(Color.blue)
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
+                        }
+                    }
+                    .padding(.bottom, 20)
+                }
+                Spacer()
+            }
+            .padding()
+        }
     }
 }
 
