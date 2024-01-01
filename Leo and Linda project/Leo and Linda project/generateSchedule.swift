@@ -55,7 +55,8 @@ func generateSchedule(numPlayers: Int, numCourts: Int, gamesPerPlayer: Int, play
 
         // Sort player indices by the number of games played
         let priorityPlayers = playerIndices.sorted { gamesCounter[$0] < gamesCounter[$1] }
-        let minGamesPerRound = min(numCourts, Int(floor(Double(numPlayers) / 4.0)))
+        // number of games per round can't exceed the minimum of either the number of courts available or the number of players divided by 4
+        let maxGamesPerRound = min(numCourts, Int(floor(Double(numPlayers) / 4.0)))
     
 
 
@@ -87,17 +88,17 @@ func generateSchedule(numPlayers: Int, numCourts: Int, gamesPerPlayer: Int, play
                     team1.forEach { gamesCounter[$0] += 1 }
                     team2.forEach { gamesCounter[$0] += 1 }
                     
-                    if roundGames.count >= minGamesPerRound {
+                    if roundGames.count >= maxGamesPerRound {
                         break
                     }
                 }
             }
-            if roundGames.count >= minGamesPerRound {
+            if roundGames.count >= maxGamesPerRound {
                 break
             }
         }
 
-     if roundGames.count >= minGamesPerRound {
+     if roundGames.count >= maxGamesPerRound {
         schedule.append(roundGames)
     } else {
     
