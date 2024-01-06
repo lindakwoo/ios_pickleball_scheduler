@@ -45,7 +45,11 @@ struct ContentView: View {
         NavigationView {
             ScrollView {
                 VStack(alignment: .center) {
-                    Image("picksked")
+                    Text("Pickleball Shuffle")
+                        .font(.title)
+                        .multilineTextAlignment(.center)
+                        .padding()
+                    Image("cindypickle 1")
                         .resizable()
                         .frame(width: 100, height: 100)
                         .padding(.bottom, 20)
@@ -53,7 +57,7 @@ struct ContentView: View {
                     Group {
                         InputFieldView(label: "Number of players:", text: $numPlayers, placeholder: "Enter number of players")
                             .onChange(of: numPlayers) { newValue in
-                             guard let playersNum = Int(numPlayers) else {
+                                guard Int(numPlayers) != nil else {
                                     self.numPlayersText = "Please enter a valid number for courts."
                                     return
                                 }
@@ -97,7 +101,7 @@ struct ContentView: View {
                                     return
                                 }
                                 let maxGamesPerPlayerAllowed = playersNum-1
-                                self.gamesPerPlayerText = gamesNum > maxGamesPerPlayerAllowed ? "Input exceeds limit: Maximum \(maxGamesPerPlayerAllowed) games per player.": ""
+                                self.gamesPerPlayerText = gamesNum > maxGamesPerPlayerAllowed ? "Input exceeds limit: Maximum \(maxGamesPerPlayerAllowed) games per player before games repeat. After \(maxGamesPerPlayerAllowed) games, start over at the beginning of the schedule at round 1.": ""
                             }
                         Text(gamesPerPlayerText)
                             .font(.callout)
@@ -112,7 +116,7 @@ struct ContentView: View {
                             Text("Generate Schedule")
                                 .foregroundColor(.white)
                                 .frame(minWidth: 200, minHeight: 50)
-                                .background(Color.cyan)
+                                .background(Color.green)
                                 .cornerRadius(10)
                         }
                     )
@@ -123,7 +127,6 @@ struct ContentView: View {
                 .padding()
              
             }
-            .navigationTitle("Pickleball Scheduler")
         }
     }
 
@@ -158,7 +161,7 @@ struct InputFieldView: View {
                 .foregroundColor(.white)
                 .padding(10)
                 .frame(height: 44)
-                .background(Color.cyan)
+                .background(Color.green)
                 .keyboardType(.decimalPad)
                 .cornerRadius(5)
         }
@@ -193,12 +196,19 @@ struct ScheduleView: View {
         ScrollView {
             VStack {
                 Text("Generated Schedule")
-                    .font(.largeTitle)
-                    .padding()
+                    .font(.title)
+                    .padding([.leading, .bottom, .trailing])
+                Image("cindypickle 1")
+                    .resizable()
+                    .frame(width: 100, height: 100)
+                    .padding(.bottom, 20)
                 ForEach(rounds) { round in
                     VStack {
+                        HStack{
+                            Toggle(isOn: $roundsChecked[round.roundNumber])
                         Text("Round \(round.roundNumber)")
                             .font(.title)
+                        }
                         
                         // Use the gameDescriptions method from Round to display each game with its number
                         ForEach(round.gameDescriptions(), id: \.self) { gameDescription in
@@ -206,7 +216,7 @@ struct ScheduleView: View {
                                 .font(.footnote)
                                 .padding()
                                 .frame(minWidth: 150)
-                                .background(Color.blue)
+                                .background(Color.green)
                                 .foregroundColor(.white)
                                 .cornerRadius(10)
                         }
