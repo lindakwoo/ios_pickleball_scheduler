@@ -18,8 +18,8 @@ struct ContentView: View {
     @State var schedule = [[Game]]() 
     @State private var playerNames: [String] = []
     
-    func setText() {
-        guard let playersNum = Int(numPlayers),
+    func genSchedule() {
+         guard let playersNum = Int(numPlayers),
               let courtsNum = Int(numCourts),
               let gamesNum = Int(numGamesPlayedPerPlayer) else {
             self.numPlayersText = "Invalid input. Please enter valid numbers."
@@ -53,6 +53,10 @@ struct ContentView: View {
                     Group {
                         InputFieldView(label: "Number of players:", text: $numPlayers, placeholder: "Enter number of players")
                             .onChange(of: numPlayers) { newValue in
+                             guard let playersNum = Int(numPlayers) else {
+                                    self.numPlayersText = "Please enter a valid number for courts."
+                                    return
+                                }
                                 if let playerCount = Int(numPlayers), playerCount > 3 {
                                     playerNames = Array(repeating: "", count: playerCount)
                                     numPlayersText = !allPlayerNamesFilled() ? "Enter the names of your \(playerCount) players below": ""
@@ -62,10 +66,9 @@ struct ContentView: View {
                                     
                                 }
                             }
-                        
                         Text(numPlayersText)
                             .font(.callout)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.red)
                         
                         ForEach(0..<playerNames.count, id: \.self) { index in
                             TextField("Player \(index + 1)", text: $playerNames[index])
@@ -93,7 +96,7 @@ struct ContentView: View {
                                     self.gamesPerPlayerText = "Please enter a valid number for games."
                                     return
                                 }
-                                let maxGamesPerPlayerAllowed = playersNum
+                                let maxGamesPerPlayerAllowed = playersNum-1
                                 self.gamesPerPlayerText = gamesNum > maxGamesPerPlayerAllowed ? "Input exceeds limit: Maximum \(maxGamesPerPlayerAllowed) games per player.": ""
                             }
                         Text(gamesPerPlayerText)
@@ -128,7 +131,7 @@ struct ContentView: View {
     private var scheduleDestinationView: some View {
         if allPlayerNamesFilled() && isPositiveInteger(numCourts) && isPositiveInteger(numGamesPlayedPerPlayer){
            // Set the text before navigating
-            return AnyView(ScheduleView(schedule: schedule, numCourts: numCourts).onAppear(perform: setText))
+            return AnyView(ScheduleView(schedule: schedule, numCourts: numCourts).onAppear(perform: genSchedule))
         } else {
             return AnyView(
                 VStack {
