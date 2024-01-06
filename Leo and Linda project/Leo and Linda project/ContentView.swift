@@ -204,11 +204,8 @@ struct ScheduleView: View {
                     .padding(.bottom, 20)
                 ForEach(rounds) { round in
                     VStack {
-                        HStack{
-                            Toggle(isOn: $roundsChecked[round.roundNumber])
                         Text("Round \(round.roundNumber)")
                             .font(.title)
-                        }
                         
                         // Use the gameDescriptions method from Round to display each game with its number
                         ForEach(round.gameDescriptions(), id: \.self) { gameDescription in
