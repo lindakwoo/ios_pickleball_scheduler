@@ -35,12 +35,12 @@ struct Round: Identifiable {
     }
 }
 
-func generateSchedule(numPlayers: Int, numCourts: Int, gamesPerPlayer: Int, playerNames: [String]) -> [[Game]] {
+func generateSchedule(numPlayers: Int, numCourts: Int, playerNames: [String]) -> [[Game]] {
     guard playerNames.count >= numPlayers, numPlayers >= 4 else {
         print("Error: Not enough players or player names provided.")
         return []
     }
-
+    var gamesPerPlayer = numPlayers-1
     var schedule = [[Game]]()
     var gamesCounter = [Int](repeating: 0, count: numPlayers)
     var teamHistory = Set<Set<Int>>()  // Track teams by player indices
