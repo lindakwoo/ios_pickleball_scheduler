@@ -10,23 +10,22 @@ import SwiftUI
 struct ContentView: View {
     @State var numPlayers: String = ""
     @State var numCourts: String = ""
-    @State var numGamesPlayedPerPlayer: String = ""
+//    @State var numGamesPlayedPerPlayer: String = ""
     @State var numPlayersText: String = ""
     @State var courtsNumText: String = ""
-    @State var gamesPerPlayerText: String = ""
+//    @State var gamesPerPlayerText: String = ""
     @State var courts: String = "courts"
     @State var schedule = [[Game]]() 
     @State private var playerNames: [String] = []
     
     func genSchedule() {
          guard let playersNum = Int(numPlayers),
-              let courtsNum = Int(numCourts),
-              let gamesNum = Int(numGamesPlayedPerPlayer) else {
+              let courtsNum = Int(numCourts) else {
             self.numPlayersText = "Invalid input. Please enter valid numbers."
             return
         }
 
-        schedule = generateSchedule(numPlayers: playersNum, numCourts: courtsNum, gamesPerPlayer: gamesNum, playerNames: playerNames)
+        schedule = generateSchedule(numPlayers: playersNum, numCourts: courtsNum, playerNames: playerNames)
     }
 
      // Check if all player names are filled out
@@ -94,18 +93,18 @@ struct ContentView: View {
                             .font(.callout)
                             .foregroundColor(.red)
 
-                        InputFieldView(label: "Games per player:", text: $numGamesPlayedPerPlayer, placeholder: "Enter games per player")
-                            .onChange(of: numGamesPlayedPerPlayer) { newValue in
-                                guard let gamesNum = Int(newValue), let playersNum = Int(numPlayers) else {
-                                    self.gamesPerPlayerText = "Please enter a valid number for games."
-                                    return
-                                }
-                                let maxGamesPerPlayerAllowed = playersNum-1
-                                self.gamesPerPlayerText = gamesNum > maxGamesPerPlayerAllowed ? "Input exceeds limit: Maximum \(maxGamesPerPlayerAllowed) games per player before games repeat. After \(maxGamesPerPlayerAllowed) games, start over at the beginning of the schedule at round 1.": ""
-                            }
-                        Text(gamesPerPlayerText)
-                            .font(.callout)
-                            .foregroundColor(.red)
+//                        InputFieldView(label: "Games per player:", text: $numGamesPlayedPerPlayer, placeholder: "Enter games per player")
+//                            .onChange(of: numGamesPlayedPerPlayer) { newValue in
+//                                guard let gamesNum = Int(newValue), let playersNum = Int(numPlayers) else {
+//                                    self.gamesPerPlayerText = "Please enter a valid number for games."
+//                                    return
+//                                }
+//                                let maxGamesPerPlayerAllowed = playersNum-1
+//                                self.gamesPerPlayerText = gamesNum > maxGamesPerPlayerAllowed ? "Input exceeds limit: Maximum \(maxGamesPerPlayerAllowed) games per player before games repeat. After \(maxGamesPerPlayerAllowed) games, start over at the beginning of the schedule at round 1.": ""
+//                            }
+//                        Text(gamesPerPlayerText)
+//                            .font(.callout)
+//                            .foregroundColor(.red)
                     }
 
                     Spacer(minLength: 20)
@@ -121,18 +120,18 @@ struct ContentView: View {
                         }
                     )
                     .padding()
-                    .disabled(!(allPlayerNamesFilled() && isPositiveInteger(numCourts) && isPositiveInteger(numGamesPlayedPerPlayer) && courtsNumText.isEmpty && gamesPerPlayerText.isEmpty))
-                    .opacity(allPlayerNamesFilled() && isPositiveInteger(numCourts) &&  courtsNumText.isEmpty && gamesPerPlayerText.isEmpty && isPositiveInteger(numGamesPlayedPerPlayer) ? 1.0 : 0.5 )
+                    .disabled(!(allPlayerNamesFilled() && isPositiveInteger(numCourts) && courtsNumText.isEmpty))
+                    .opacity((allPlayerNamesFilled() && isPositiveInteger(numCourts) && courtsNumText.isEmpty) ? 1.0 : 0.5)
                 }
                 .padding()
-             
+    
             }
         }
     }
 
     // Destination view for the NavigationLink
     private var scheduleDestinationView: some View {
-        if allPlayerNamesFilled() && isPositiveInteger(numCourts) && isPositiveInteger(numGamesPlayedPerPlayer){
+        if allPlayerNamesFilled() && isPositiveInteger(numCourts){
            // Set the text before navigating
             return AnyView(ScheduleView(schedule: schedule, numCourts: numCourts).onAppear(perform: genSchedule))
         } else {
