@@ -30,7 +30,7 @@ struct Round: Identifiable {
     // Generate a description for each game with its number
     func gameDescriptions() -> [String] {
         return games.enumerated().map { (index, game) in
-            "Game \(index + 1): \(game.description)"
+            "Court \(index + 1): \(game.description)"
         }
     }
 }

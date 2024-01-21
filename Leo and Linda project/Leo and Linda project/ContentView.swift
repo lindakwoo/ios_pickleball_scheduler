@@ -33,16 +33,23 @@ struct ScheduleView: View {
 
     var body: some View {
         ScrollView {
-            VStack {
-                Text("Generated Schedule")
-                    .font(.title)
-                    .padding([.leading, .bottom, .trailing])
-                Image("cindypickle 1")
-                    .resizable()
-                    .frame(width: 100, height: 100)
-                    .padding(.bottom, 20)
-                ForEach(rounds) { round in
+            VStack(alignment: .center) {
+                HStack {
+                    Spacer()
                     VStack {
+                        Text("Pickleball Shuffle")
+                            .font(.title)
+                            .multilineTextAlignment(.center)
+                            .padding()
+                        Image("cindypickle 1")
+                            .resizable()
+                            .frame(width: 100, height: 100)
+                            .padding(.bottom, 20)
+                    }
+                    Spacer()
+                }
+                ForEach(rounds) { round in
+                    VStack(alignment: .center) {
                         Text("Round \(round.roundNumber)")
                             .font(.title)
                         
@@ -102,22 +109,32 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack(alignment: .center) {
-                    Text("Pickleball Shuffle")
-                        .font(.title)
-                        .multilineTextAlignment(.center)
-                        .padding()
-                    Image("cindypickle 1")
-                        .resizable()
-                        .frame(width: 100, height: 100)
-                        .padding(.bottom, 20)
+                VStack(alignment: .leading) {
+                    HStack {
+                        Spacer()
+                        VStack {
+                            Text("Pickleball Shuffle")
+                                .font(.title)
+                                .multilineTextAlignment(.center)
+                                .padding()
+                            Image("cindypickle 1")
+                                .resizable()
+                                .frame(width: 100, height: 100)
+                                .padding(.bottom, 20)
+                        }
+                        Spacer()
+                    }
                     Text(enterPlayersText)
                         .multilineTextAlignment(.leading)
                         .foregroundColor(.red)
+                        .padding(.bottom)
+                    Text("Total number of players: \(players.count)")
+                        .padding(.bottom)
+                        .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                     Group {
                         // Single input field for player name
                         HStack(alignment: .top){
-                            TextField("Player Name", text: $playerName)
+                            TextField("Enter Player Name", text: $playerName)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                             
                             // Button to add player
@@ -134,10 +151,8 @@ struct ContentView: View {
                                     .font(.title)
                             }
                         }
-                        Text("Total number of players: \(players.count)")
-                            .frame(alignment: .leading)
-                            .padding()
-                        Spacer()
+                        .padding(.bottom)
+                        
                         // List of players with delete button
                         ForEach(players, id: \.self) { player in
                             HStack {
@@ -160,6 +175,7 @@ struct ContentView: View {
                                                            .fill(Color.white)
                                                            .border(Color.gray))
                         }
+                        .padding(.bottom)
                     }
                     
                     InputFieldView(label: "Number of courts:", text: $numCourts, placeholder: "Enter number of courts")
@@ -181,11 +197,15 @@ struct ContentView: View {
                     NavigationLink(
                         destination: scheduleDestinationView,
                         label: {
-                            Text("Generate Schedule")
-                                .foregroundColor(.white)
-                                .frame(minWidth: 200, minHeight: 50)
-                                .background(Color.green)
-                                .cornerRadius(10)
+                            HStack{
+                                Spacer()
+                                Text("Generate Schedule")
+                                    .foregroundColor(.white)
+                                    .frame(width: 200, height: 50, alignment: .center)
+                                    .background(Color.green)
+                                    .cornerRadius(10)
+                                Spacer()
+                            }
                         }
                     )
                     .padding()
