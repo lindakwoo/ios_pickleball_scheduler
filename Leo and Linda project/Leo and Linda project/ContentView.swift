@@ -75,7 +75,7 @@ struct ContentView: View {
     @State var schedule = [[Game]]()
     @State private var playerName: String = ""
     @State private var players: [String] = []
-    @State var enterPlayersText: String = "Enter at least 4 players"
+    @State var enterPlayersText: String = "Enter at least 4 players:"
     
     func genSchedule() {
         guard let playersNum = Int(numPlayers),
@@ -111,10 +111,12 @@ struct ContentView: View {
                         .resizable()
                         .frame(width: 100, height: 100)
                         .padding(.bottom, 20)
-                    
+                    Text(enterPlayersText)
+                        .multilineTextAlignment(.leading)
+                        .foregroundColor(.red)
                     Group {
                         // Single input field for player name
-                        HStack{
+                        HStack(alignment: .top){
                             TextField("Player Name", text: $playerName)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                             
@@ -124,7 +126,7 @@ struct ContentView: View {
                                     players.append(playerName)
                                     playerName = ""
                                     numPlayers = String(players.count)
-                                    enterPlayersText = players.count > 3 ? "": "Enter at least 4 players"
+                                    enterPlayersText = players.count > 3 ? "": "Enter at least 4 players:"
                                 }
                             }) {
                                 Image(systemName: "plus.circle.fill")
@@ -132,6 +134,10 @@ struct ContentView: View {
                                     .font(.title)
                             }
                         }
+                        Text("Total number of players: \(players.count)")
+                            .frame(alignment: .leading)
+                            .padding()
+                        Spacer()
                         // List of players with delete button
                         ForEach(players, id: \.self) { player in
                             HStack {
@@ -142,7 +148,7 @@ struct ContentView: View {
                                     if let index = players.firstIndex(of: player) {
                                         players.remove(at: index)
                                         numPlayers = String(players.count)
-                                        enterPlayersText = players.count > 3 ? "": "Enter at least 4 players"
+                                        enterPlayersText = players.count > 3 ? "": "Enter at least 4 players:"
                                     }
                                 }) {
                                     Image(systemName: "x.circle.fill")
@@ -170,7 +176,7 @@ struct ContentView: View {
                         .foregroundColor(.red)
                     
                     Spacer(minLength: 20)
-                    Text(enterPlayersText)
+                   
                     
                     NavigationLink(
                         destination: scheduleDestinationView,
