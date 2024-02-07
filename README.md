@@ -1,1 +1,1 @@
-This app is currently in testing mode.  Contact me if you want to be a tester!
+An IOS app that generates random schedules for any size group with a given number of courts.  Schedules players so that 1) each player sits out a "fair" amount of times if there are not enough courts and 2) players don't end up playing with the same teammates over and over again.  This app is currently in testing mode.  Contact me if you want to be a tester!
