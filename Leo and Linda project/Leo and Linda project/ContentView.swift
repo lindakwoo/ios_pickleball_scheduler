@@ -16,6 +16,7 @@ extension Array {
 }
 
 struct ScheduleView: View {
+    @Environment(\.colorScheme) var colorScheme
     let schedule: [[Game]]  // Schedule is now an array of rounds, each containing an array of Games
     let numCourts: String
 
@@ -41,10 +42,18 @@ struct ScheduleView: View {
                             .font(.title)
                             .multilineTextAlignment(.center)
                             .padding()
-                        Image("cindypickle 1")
+                       if colorScheme == .dark {
+                        Image("cindyPickleDarkBackground") // Use the dark mode image
                             .resizable()
                             .frame(width: 100, height: 100)
                             .padding(.bottom, 20)
+                    } else {
+                        Image("cindypickle 1") // Use the light mode image
+                            .resizable()
+                            .frame(width: 100, height: 100)
+                            .padding(.bottom, 20)
+                    }
+                           
                     }
                     Spacer()
                 }
