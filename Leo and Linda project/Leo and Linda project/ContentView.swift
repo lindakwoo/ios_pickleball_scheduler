@@ -48,7 +48,7 @@ struct ScheduleView: View {
                             .frame(width: 100, height: 100)
                             .padding(.bottom, 20)
                     } else {
-                        Image("cindypickle 1") // Use the light mode image
+                        Image("image1") // Use the light mode image
                             .resizable()
                             .frame(width: 100, height: 100)
                             .padding(.bottom, 20)
