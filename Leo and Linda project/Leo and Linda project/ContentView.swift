@@ -48,7 +48,7 @@ struct ScheduleView: View {
                             .frame(width: 100, height: 100)
                             .padding(.bottom, 20)
                     } else {
-                        Image("image1") // Use the light mode image
+                        Image("cindypickle 1") // Use the light mode image
                             .resizable()
                             .frame(width: 100, height: 100)
                             .padding(.bottom, 20)
@@ -92,6 +92,7 @@ struct ContentView: View {
     @State private var playerName: String = ""
     @State private var players: [String] = []
     @State var enterPlayersText: String = "Enter at least 4 players:"
+    @Environment(\.colorScheme) var colorScheme
     
     func genSchedule() {
         guard let playersNum = Int(numPlayers),
@@ -126,10 +127,18 @@ struct ContentView: View {
                                 .font(.title)
                                 .multilineTextAlignment(.center)
                                 .padding()
-                            Image("cindypickle 1")
-                                .resizable()
-                                .frame(width: 100, height: 100)
-                                .padding(.bottom, 20)
+                                if colorScheme == .dark {
+                        Image("icon") // Use the dark mode image
+                            .resizable()
+                            .frame(width: 100, height: 100)
+                            .padding(.bottom, 20)
+                    } else {
+                        Image("cindypickle 1") // Use the light mode image
+                            .resizable()
+                            .frame(width: 100, height: 100)
+                            .padding(.bottom, 20)
+                    }
+                          
                         }
                         Spacer()
                     }
