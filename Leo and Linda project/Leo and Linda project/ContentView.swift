@@ -43,7 +43,7 @@ struct ScheduleView: View {
                             .multilineTextAlignment(.center)
                             .padding()
                        if colorScheme == .dark {
-                        Image("cindyPickleDarkBackground") // Use the dark mode image
+                        Image("icon") // Use the dark mode image
                             .resizable()
                             .frame(width: 100, height: 100)
                             .padding(.bottom, 20)
@@ -128,7 +128,7 @@ struct ContentView: View {
                                 .multilineTextAlignment(.center)
                                 .padding()
                                 if colorScheme == .dark {
-                        Image("cindyPickleDarkBackground") // Use the dark mode image
+                        Image("icon") // Use the dark mode image
                             .resizable()
                             .frame(width: 100, height: 100)
                             .padding(.bottom, 20)
