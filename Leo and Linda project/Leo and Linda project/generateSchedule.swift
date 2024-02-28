@@ -81,8 +81,8 @@ func generateSchedule(numPlayers: Int, numCourts: Int, playerNames: [String]) ->
                     roundGames.append(newGame)
 
                     // Update histories and counters
-                    teamHistory.insert(team1)
-                    teamHistory.insert(team2)
+                    teamHistory.insert(team1.sorted())
+                    teamHistory.insert(team2.sorted())
                     usedPlayers.formUnion(team1)
                     usedPlayers.formUnion(team2)
                     team1.forEach { gamesCounter[$0] += 1 }
