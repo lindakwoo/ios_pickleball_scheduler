@@ -70,10 +70,13 @@ func generateSchedule(numPlayers: Int, numCourts: Int, playerNames: [String]) ->
 
                 let team1 = Set(teamIndexes)
                 let team2 = remainingIndexes
+                
+                let team1Set = Set(team1.sorted())
+                let team2Set = Set(team2.sorted())
 
                 // Ensure unique teams and that players aren't already used this round
-                if !teamHistory.contains(team1) && !teamHistory.contains(team2) &&
-                   usedPlayers.isDisjoint(with: team1) && usedPlayers.isDisjoint(with: team2) {
+                if !teamHistory.contains(team1Set) && !teamHistory.contains(team2Set) &&
+                   usedPlayers.isDisjoint(with: team1Set) && usedPlayers.isDisjoint(with: team2Set) {
                     
                     // Create a new Game with player names, not indices
                     let newGame = Game(team1: team1.map { playerNames[$0] },
@@ -81,8 +84,8 @@ func generateSchedule(numPlayers: Int, numCourts: Int, playerNames: [String]) ->
                     roundGames.append(newGame)
 
                     // Update histories and counters
-                    teamHistory.insert(team1.sorted())
-                    teamHistory.insert(team2.sorted())
+                    teamHistory.insert(team1Set)
+                    teamHistory.insert(team2Set)
                     usedPlayers.formUnion(team1)
                     usedPlayers.formUnion(team2)
                     team1.forEach { gamesCounter[$0] += 1 }
